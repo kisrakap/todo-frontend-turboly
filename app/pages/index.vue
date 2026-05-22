@@ -74,149 +74,170 @@
   </div>
 
   <div
-      v-if="authStore.taskError"
-      class="mt-4 p-4 bg-red-100 text-red-700 rounded"
-    >
-      {{ authStore.taskError }}
-    </div>
+    v-if="authStore.taskError"
+    class="mt-4 p-4 bg-red-100 text-red-700 rounded"
+  >
+    {{ authStore.taskError }}
+  </div>
 
-    <div v-if="authStore.taskLoading" class="mt-6 text-center text-slate-600">
-      Memuat tugas...
-    </div>
+  <div v-if="authStore.taskLoading" class="mt-6 text-center text-slate-600">
+    Memuat tugas...
+  </div>
 
+  <div
+    v-else-if="authStore.tasks.length === 0"
+    class="mt-6 text-center text-slate-600"
+  >
+    Tidak ada tugas. Buat tugas baru untuk memulai!
+  </div>
+
+  <div v-else class="mt-6 space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-slate-800">Your List</h3>
+      <div class="flex gap-2">
+        <button
+          @click="authStore.sortBy = 'dueDate'"
+          :class="[
+            'px-4 py-2 rounded font-medium transition',
+            authStore.sortBy === 'dueDate'
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
+          ]"
+        >
+          📅 By Date
+        </button>
+        <button
+          @click="authStore.sortBy = 'priority'"
+          :class="[
+            'px-4 py-2 rounded font-medium transition',
+            authStore.sortBy === 'priority'
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
+          ]"
+        >
+          ⚡ By Priority
+        </button>
+        <button
+          @click="authStore.toggleIncompleteFilter()"
+          :class="[
+            'px-4 py-2 rounded font-medium transition',
+            authStore.showIncompleteOnly
+              ? 'bg-emerald-600 text-white'
+              : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
+          ]"
+        >
+          ✅ Only Complete
+        </button>
+        <button
+          @click="authStore.toggleCompletedFilter()"
+          :class="[
+            'px-4 py-2 rounded font-medium transition',
+            authStore.showCompletedOnly
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
+          ]"
+        >
+          ✔️ Only Completed
+        </button>
+      </div>
+    </div>
     <div
-      v-else-if="authStore.tasks.length === 0"
-      class="mt-6 text-center text-slate-600"
+      v-for="task in authStore.sortedTasks"
+      :key="task.id"
+      class="p-4 border border-slate-200 rounded bg-slate-50"
     >
-      Tidak ada tugas. Buat tugas baru untuk memulai!
-    </div>
+      <div class="flex justify-between items-start gap-4">
+        <div class="flex-1">
+          <p
+            :class="[
+              'font-bold text-slate-900',
+              task.isComplete ? 'line-through text-slate-400 opacity-60' : '',
+            ]"
+          >
+            {{ task.title }}
+          </p>
+          <p
+            :class="[
+              'font-medium text-slate-800',
+              task.isComplete ? 'opacity-60' : '',
+            ]"
+          >
+            {{ task.description }}
+          </p>
+          <p
+            :class="[
+              'text-sm text-slate-600',
+              task.isComplete ? 'opacity-60' : '',
+            ]"
+          >
+            Due: {{ new Date(task.dueDate).toLocaleDateString("id-ID") }}
+          </p>
+          <span
+            :class="[
+              'text-xs px-2 py-1 rounded mt-2 inline-block',
+              task.priority?.toLowerCase() === 'high'
+                ? 'bg-red-200 text-red-700'
+                : task.priority?.toLowerCase() === 'medium'
+                  ? 'bg-yellow-200 text-yellow-700'
+                  : 'bg-green-200 text-green-700',
+            ]"
+          >
+            {{ task.priority }}
+          </span>
+        </div>
 
-    <div v-else class="mt-6 space-y-4">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-slate-800">Your List</h3>
-        <div class="flex gap-2">
+        <div class="flex flex-col gap-2 justify-between">
           <button
-            @click="authStore.sortBy = 'dueDate'"
-            :class="[
-              'px-4 py-2 rounded font-medium transition',
-              authStore.sortBy === 'dueDate'
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
-            ]"
+            type="button"
+            @click="authStore.completeTask(task.id)"
+            class="px-4 py-2 rounded font-medium transition bg-emerald-600 text-white hover:bg-emerald-700"
           >
-            📅 By Date
+            {{ task.isComplete ? "Mark Incomplete" : "Mark Complete" }}
           </button>
           <button
-            @click="authStore.sortBy = 'priority'"
-            :class="[
-              'px-4 py-2 rounded font-medium transition',
-              authStore.sortBy === 'priority'
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
-            ]"
+            type="button"
+            @click="authStore.deleteTask(task.id)"
+            class="px-4 py-2 rounded font-medium transition bg-red-600 text-white hover:bg-red-700"
           >
-            ⚡ By Priority
-          </button>
-          <button
-            @click="authStore.toggleIncompleteFilter()"
-            :class="[
-              'px-4 py-2 rounded font-medium transition',
-              authStore.showIncompleteOnly
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
-            ]"
-          >
-            ✅ Only Complete
-          </button>
-          <button
-            @click="authStore.toggleCompletedFilter()"
-            :class="[
-              'px-4 py-2 rounded font-medium transition',
-              authStore.showCompletedOnly
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
-            ]"
-          >
-            ✔️ Only Completed
+            Delete
           </button>
         </div>
       </div>
-      <div
-        v-for="task in authStore.sortedTasks"
-        :key="task.id"
-        class="p-4 border border-slate-200 rounded bg-slate-50"
-      >
-        <div class="flex justify-between items-start gap-4">
-          <div class="flex-1">
-            <p
-              :class="[
-                'font-bold text-slate-900',
-                task.isComplete ? 'line-through text-slate-400 opacity-60' : '',
-              ]"
-            >
-              {{ task.title }}
-            </p>
-            <p
-              :class="[
-                'font-medium text-slate-800',
-                task.isComplete ? 'opacity-60' : '',
-              ]"
-            >
-              {{ task.description }}
-            </p>
-            <p
-              :class="[
-                'text-sm text-slate-600',
-                task.isComplete ? 'opacity-60' : '',
-              ]"
-            >
-              Due: {{ new Date(task.dueDate).toLocaleDateString("id-ID") }}
-            </p>
-            <span
-              :class="[
-                'text-xs px-2 py-1 rounded mt-2 inline-block',
-                task.priority?.toLowerCase() === 'high'
-                  ? 'bg-red-200 text-red-700'
-                  : task.priority?.toLowerCase() === 'medium'
-                    ? 'bg-yellow-200 text-yellow-700'
-                    : 'bg-green-200 text-green-700',
-              ]"
-            >
-              {{ task.priority }}
-            </span>
-          </div>
-
-          <div class="flex flex-col gap-2 justify-between">
-            <button
-              type="button"
-              @click="authStore.completeTask(task.id)"
-              class="px-4 py-2 rounded font-medium transition bg-emerald-600 text-white hover:bg-emerald-700"
-            >
-              {{ task.isComplete ? "Mark Incomplete" : "Mark Complete" }}
-            </button>
-            <button
-              type="button"
-              @click="authStore.deleteTask(task.id)"
-              class="px-4 py-2 rounded font-medium transition bg-red-600 text-white hover:bg-red-700"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
 import { useAuthStore } from "~/stores/auth";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
+const router = useRouter();
+
+// Restore auth state from localStorage on page load
+const restoreAuthState = () => {
+  if (typeof window !== "undefined") {
+    const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+
+    if (savedToken && savedUser) {
+      authStore.token = savedToken;
+      authStore.user = JSON.parse(savedUser);
+    } else {
+      router.push("/login");
+    }
+  }
+};
 
 definePageMeta({
   middleware: [
     function () {
       const auth = useAuthStore();
-      if (!auth.isAuthenticated) {
+      // Check both stored token and in-memory token
+      const storedToken =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      if (!auth.isAuthenticated && !storedToken) {
         return navigateTo("/login");
       }
     },
@@ -224,6 +245,9 @@ definePageMeta({
 });
 
 onMounted(() => {
-  authStore.fetchTasks();
+  restoreAuthState();
+  if (authStore.isAuthenticated) {
+    authStore.fetchTasks();
+  }
 });
 </script>
