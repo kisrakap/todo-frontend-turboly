@@ -7,9 +7,11 @@
   <div class="flex justify-center w-full p-4">
     <form
       @submit.prevent="authStore.addTask"
-      class="grid grid-cols-1 md:grid-cols-5 gap-4 w-full max-w-5xl bg-white p-6 rounded-lg shadow-sm"
+      class="w-full max-w-5xl bg-white p-6 rounded-lg shadow-sm"
     >
-      <div class="md:col-span-5">
+      <!-- Mobile: single column; Tablet: stack; Desktop: optimized layout -->
+      <!-- Title - Full Width -->
+      <div class="mb-4">
         <label class="block text-sm font-medium mb-1 text-slate-700"
           >Title</label
         >
@@ -22,7 +24,8 @@
         />
       </div>
 
-      <div class="md:col-span-5">
+      <!-- Description - Full Width -->
+      <div class="mb-4">
         <label class="block text-sm font-medium mb-1 text-slate-700"
           >Description</label
         >
@@ -35,40 +38,44 @@
         />
       </div>
 
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium mb-1 text-slate-700"
-          >Due Date</label
-        >
-        <input
-          v-model="authStore.form.dueDate"
-          type="date"
-          class="w-full border p-2 rounded focus:outline-blue-500 text-slate-800"
-          required
-        />
-      </div>
+      <!-- Due Date & Priority - Side by Side on Desktop/Tablet, Stack on Mobile -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div class="sm:col-span-1">
+          <label class="block text-sm font-medium mb-1 text-slate-700"
+            >Due Date</label
+          >
+          <input
+            v-model="authStore.form.dueDate"
+            type="date"
+            class="w-full border p-2 rounded focus:outline-blue-500 text-slate-800"
+            required
+          />
+        </div>
 
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium mb-1 text-slate-700"
-          >Priority</label
-        >
-        <select
-          v-model="authStore.form.priority"
-          class="w-full border p-2 rounded focus:outline-blue-500 text-slate-800"
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-      </div>
+        <div class="sm:col-span-1">
+          <label class="block text-sm font-medium mb-1 text-slate-700"
+            >Priority</label
+          >
+          <select
+            v-model="authStore.form.priority"
+            class="w-full border p-2 rounded focus:outline-blue-500 text-slate-800"
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
 
-      <div class="md:col-span-1 flex items-end">
-        <button
-          type="submit"
-          :disabled="authStore.taskLoading"
-          class="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded font-medium transition shadow disabled:opacity-50 h-[42px]"
-        >
-          {{ authStore.taskLoading ? "..." : "+ Tambah Task" }}
-        </button>
+        <!-- Add Button - Full width on mobile/tablet, sits on right on desktop -->
+        <div class="sm:col-span-2 lg:col-span-1 lg:flex lg:items-end">
+          <button
+            type="submit"
+            :disabled="authStore.taskLoading"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition shadow disabled:opacity-50 h-[42px]"
+          >
+            {{ authStore.taskLoading ? "..." : "+ Tambah Task" }}
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -92,13 +99,13 @@
   </div>
 
   <div v-else class="mt-6 space-y-4">
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
       <h3 class="text-lg font-bold text-slate-800">Your List</h3>
-      <div class="flex gap-2">
+      <div class="flex flex-col sm:flex-row gap-2 flex-wrap">
         <button
           @click="authStore.sortBy = 'dueDate'"
           :class="[
-            'px-4 py-2 rounded font-medium transition',
+            'px-3 py-2 rounded font-medium transition text-sm sm:text-base',
             authStore.sortBy === 'dueDate'
               ? 'bg-blue-600 text-white'
               : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
@@ -109,7 +116,7 @@
         <button
           @click="authStore.sortBy = 'priority'"
           :class="[
-            'px-4 py-2 rounded font-medium transition',
+            'px-3 py-2 rounded font-medium transition text-sm sm:text-base',
             authStore.sortBy === 'priority'
               ? 'bg-blue-600 text-white'
               : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
@@ -120,7 +127,7 @@
         <button
           @click="authStore.toggleIncompleteFilter()"
           :class="[
-            'px-4 py-2 rounded font-medium transition',
+            'px-3 py-2 rounded font-medium transition text-sm sm:text-base',
             authStore.showIncompleteOnly
               ? 'bg-emerald-600 text-white'
               : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
@@ -131,6 +138,15 @@
         <button
           @click="authStore.toggleCompletedFilter()"
           :class="[
+            'px-3 py-2 rounded font-medium transition text-sm sm:text-base',
+            authStore.showCompletedOnly
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-700 hover:bg-slate-300',
+          ]"
+        >
+          ✔️ Only Completed
+        </button>
+      </div>
             'px-4 py-2 rounded font-medium transition',
             authStore.showCompletedOnly
               ? 'bg-blue-600 text-white'
@@ -141,16 +157,16 @@
         </button>
       </div>
     </div>
-    <div
-      v-for="task in authStore.sortedTasks"
-      :key="task.id"
-      class="p-4 border border-slate-200 rounded bg-slate-50"
-    >
-      <div class="flex justify-between items-start gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
+      <div
+        v-for="task in authStore.sortedTasks"
+        :key="task.id"
+        class="p-4 border border-slate-200 rounded bg-slate-50 flex flex-col justify-between"
+      >
         <div class="flex-1">
           <p
             :class="[
-              'font-bold text-slate-900',
+              'font-bold text-slate-900 text-base sm:text-lg',
               task.isComplete ? 'line-through text-slate-400 opacity-60' : '',
             ]"
           >
@@ -158,7 +174,7 @@
           </p>
           <p
             :class="[
-              'font-medium text-slate-800',
+              'font-medium text-slate-800 text-sm sm:text-base mt-2',
               task.isComplete ? 'opacity-60' : '',
             ]"
           >
@@ -166,7 +182,7 @@
           </p>
           <p
             :class="[
-              'text-sm text-slate-600',
+              'text-xs sm:text-sm text-slate-600 mt-2',
               task.isComplete ? 'opacity-60' : '',
             ]"
           >
@@ -186,18 +202,18 @@
           </span>
         </div>
 
-        <div class="flex flex-col gap-2 justify-between">
+        <div class="flex flex-col gap-2 mt-4 sm:flex-row sm:gap-2">
           <button
             type="button"
             @click="authStore.completeTask(task.id)"
-            class="px-4 py-2 rounded font-medium transition bg-emerald-600 text-white hover:bg-emerald-700"
+            class="px-3 py-2 rounded font-medium transition bg-emerald-600 text-white hover:bg-emerald-700 text-sm sm:text-base flex-1"
           >
             {{ task.isComplete ? "Mark Incomplete" : "Mark Complete" }}
           </button>
           <button
             type="button"
             @click="authStore.deleteTask(task.id)"
-            class="px-4 py-2 rounded font-medium transition bg-red-600 text-white hover:bg-red-700"
+            class="px-3 py-2 rounded font-medium transition bg-red-600 text-white hover:bg-red-700 text-sm sm:text-base flex-1"
           >
             Delete
           </button>
