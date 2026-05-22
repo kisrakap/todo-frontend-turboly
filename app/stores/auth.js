@@ -86,9 +86,6 @@ export const useAuthStore = defineStore("auth", {
           body: JSON.stringify({ username, password, email }),
         });
 
-        console.log(response, "login response"); // Debug log
-
-        // Construct user object dari response
         this.user = {
           userId: response.userId,
           username: username,
@@ -166,7 +163,6 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const response = await useAPI(`/tasks?userId=${userId}`);
-        console.log(response, "fetch tasks response"); // Debug log
 
         // Handle different response structures
         if (Array.isArray(response)) {
@@ -178,11 +174,8 @@ export const useAuthStore = defineStore("auth", {
         } else {
           this.tasks = [];
         }
-
-        console.log(this.tasks, "tasks after fetch"); // Debug log
       } catch (err) {
         this.taskError = err.message || "Gagal memuat tugas";
-        console.error(err, "fetch tasks error"); // Debug log
       } finally {
         this.taskLoading = false;
       }
