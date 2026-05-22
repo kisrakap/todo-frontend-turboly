@@ -1,19 +1,18 @@
 <template>
   <div class="p-6 bg-white rounded shadow">
-    <h1 class="text-2xl font-bold text-green-600">
-      Halaman Utama Berhasil Terbaca! 🎉
-    </h1>
-    <p class="mt-2">Folder pages sudah berada di tempat yang benar.</p>
+    <h1 class="text-2xl font-bold text-green-600">Home 🎉</h1>
+    <p class="mt-2">buat to do list kamu</p>
   </div>
 
-  <div class="bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4 text-slate-800">Tambah Tugas Baru</h2>
+  <div class="flex justify-center w-full p-4">
     <form
       @submit.prevent="authStore.addTask"
-      class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
+      class="grid grid-cols-1 md:grid-cols-5 gap-4 w-full max-w-5xl bg-white p-6 rounded-lg shadow-sm"
     >
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium mb-1">Judul Tugas</label>
+      <div class="md:col-span-5">
+        <label class="block text-sm font-medium mb-1 text-slate-700"
+          >Title</label
+        >
         <input
           v-model="authStore.form.title"
           type="text"
@@ -22,8 +21,11 @@
           required
         />
       </div>
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium mb-1">Deskripsi</label>
+
+      <div class="md:col-span-5">
+        <label class="block text-sm font-medium mb-1 text-slate-700"
+          >Description</label
+        >
         <input
           v-model="authStore.form.description"
           type="text"
@@ -32,8 +34,11 @@
           required
         />
       </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Due Date</label>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium mb-1 text-slate-700"
+          >Due Date</label
+        >
         <input
           v-model="authStore.form.dueDate"
           type="date"
@@ -41,8 +46,11 @@
           required
         />
       </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Prioritas</label>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium mb-1 text-slate-700"
+          >Priority</label
+        >
         <select
           v-model="authStore.form.priority"
           class="w-full border p-2 rounded focus:outline-blue-500 text-slate-800"
@@ -52,18 +60,20 @@
           <option value="high">High</option>
         </select>
       </div>
-      <div class="md:col-span-5 flex justify-end">
+
+      <div class="md:col-span-1 flex items-end">
         <button
           type="submit"
           :disabled="authStore.taskLoading"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium transition shadow disabled:opacity-50"
+          class="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded font-medium transition shadow disabled:opacity-50 h-[42px]"
         >
-          {{ authStore.taskLoading ? "Menambah..." : "+ Tambah Task" }}
+          {{ authStore.taskLoading ? "..." : "+ Tambah Task" }}
         </button>
       </div>
     </form>
+  </div>
 
-    <div
+  <div
       v-if="authStore.taskError"
       class="mt-4 p-4 bg-red-100 text-red-700 rounded"
     >
@@ -83,7 +93,7 @@
 
     <div v-else class="mt-6 space-y-4">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-slate-800">Daftar Tugas</h3>
+        <h3 class="text-lg font-bold text-slate-800">Your List</h3>
         <div class="flex gap-2">
           <button
             @click="authStore.sortBy = 'dueDate'"
@@ -195,7 +205,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>

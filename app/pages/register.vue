@@ -7,11 +7,18 @@
         <label class="block text-sm font-medium mb-1">Username</label>
         <input v-model="username" type="text" class="w-full border p-2 rounded focus:outline-blue-500" required />
       </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Email</label>
+        <input v-model="email" type="email" class="w-full border p-2 rounded focus:outline-blue-500" />
+      </div>
       
       <div>
         <label class="block text-sm font-medium mb-1">Password</label>
         <input v-model="password" type="password" class="w-full border p-2 rounded focus:outline-blue-500" required />
       </div>
+
+
 
       <p v-if="authStore.error" class="text-red-500 text-sm">{{ authStore.error }}</p>
       
@@ -27,18 +34,21 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '~/stores/auth'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "~/stores/auth";
 
-const username = ref('')
-const password = ref('')
-const authStore = useAuthStore()
-const router = useRouter()
+const username = ref("");
+const email = ref("");
+const password = ref("");
+const authStore = useAuthStore();
+const router = useRouter();
 
 const handleRegister = async () => {
   try {
-    await authStore.register(username.value, password.value)
-    alert('Registrasi sukses! Silakan login.')
-    router.push('/login')
+    await authStore.register(username.value, email.value, password.value);
+    alert('Registrasi sukses! Silakan login.');
+    router.push('/login');
   } catch (err) {
     console.error(err)
   }
