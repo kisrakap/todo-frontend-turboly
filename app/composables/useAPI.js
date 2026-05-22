@@ -5,7 +5,7 @@ export const useAPI = (url, options = {}) => {
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   return $fetch(url, {
-    baseURL: "http://localhost:3000/api",
+    baseURL: "https://todobackend-turboly.vercel.app/api",
     ...options,
     headers: {
       "content-type": "application/json",
