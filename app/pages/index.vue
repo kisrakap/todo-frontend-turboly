@@ -148,16 +148,17 @@
         </button>
       </div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="space-y-3">
       <div
         v-for="task in authStore.sortedTasks"
         :key="task.id"
-        class="p-4 border border-slate-200 rounded bg-slate-50 flex flex-col justify-between"
+        class="p-4 border border-slate-200 rounded bg-slate-50 flex justify-between items-start gap-4"
       >
+        <!-- Task Info (Left Side) -->
         <div class="flex-1">
           <p
             :class="[
-              'font-bold text-slate-900 text-base sm:text-lg',
+              'font-bold text-slate-900 text-base',
               task.isComplete ? 'line-through text-slate-400 opacity-60' : '',
             ]"
           >
@@ -165,7 +166,7 @@
           </p>
           <p
             :class="[
-              'font-medium text-slate-800 text-sm sm:text-base mt-2',
+              'font-medium text-slate-800 text-sm mt-1',
               task.isComplete ? 'opacity-60' : '',
             ]"
           >
@@ -173,7 +174,7 @@
           </p>
           <p
             :class="[
-              'text-xs sm:text-sm text-slate-600 mt-2',
+              'text-xs text-slate-600 mt-1',
               task.isComplete ? 'opacity-60' : '',
             ]"
           >
@@ -181,7 +182,7 @@
           </p>
           <span
             :class="[
-              'text-xs px-2 py-1 rounded mt-2 inline-block',
+              'text-xs px-2 py-0.5 rounded mt-2 inline-block',
               task.priority?.toLowerCase() === 'high'
                 ? 'bg-red-200 text-red-700'
                 : task.priority?.toLowerCase() === 'medium'
@@ -193,18 +194,19 @@
           </span>
         </div>
 
-        <div class="flex flex-col gap-2 mt-4 sm:flex-row sm:gap-2">
+        <!-- Buttons (Right Side - Top & Bottom) -->
+        <div class="flex flex-col gap-2">
           <button
             type="button"
             @click="authStore.completeTask(task.id)"
-            class="px-3 py-2 rounded font-medium transition bg-emerald-600 text-white hover:bg-emerald-700 text-sm sm:text-base flex-1"
+            class="px-2 py-1 rounded font-medium transition bg-emerald-600 text-white hover:bg-emerald-700 text-xs whitespace-nowrap"
           >
             {{ task.isComplete ? "Mark Incomplete" : "Mark Complete" }}
           </button>
           <button
             type="button"
             @click="authStore.deleteTask(task.id)"
-            class="px-3 py-2 rounded font-medium transition bg-red-600 text-white hover:bg-red-700 text-sm sm:text-base flex-1"
+            class="px-2 py-1 rounded font-medium transition bg-red-600 text-white hover:bg-red-700 text-xs whitespace-nowrap"
           >
             Delete
           </button>
